@@ -2,14 +2,25 @@ import React, { useState, useSyncExternalStore } from "react";
 import petsData from "../petsData";
 import PetItem from "./PetItem";
 import Modal from "./Modal";
+import { getAllPets, getPetById } from "../API/pets";
 
 const PetList = () => {
   const [query, setQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
-
-  const petList = petsData
+  const [pets, setPets] = useState([]);
+  // const petList = petsData
+  //   .filter((pet) => pet.name.toLowerCase().includes(query.toLowerCase()))
+  //   .map((pet) => <PetItem pet={pet} key={pet.id} />);
+  const petList = pets
     .filter((pet) => pet.name.toLowerCase().includes(query.toLowerCase()))
     .map((pet) => <PetItem pet={pet} key={pet.id} />);
+
+  const getPets = async () => {
+    const res = await getAllPets();
+    setPets(res);
+    return pets;
+  };
+
   return (
     <>
       <div className="bg-[#F9E3BE] flex flex-col justify-center items-center ">
@@ -29,12 +40,19 @@ const PetList = () => {
           >
             Add pet
           </button>
+
+          <button
+            onClick={getPets}
+            className="ml-auto w-[25%] px-3 py-2 rounded-md text-sm md:text-xl border border-black  flex justify-center items-center bg-green-400 hover:bg-green-600"
+          >
+            Get Pets
+          </button>
         </div>
-        <div className=" flex flex-col flex-wrap md:flex-row gap-[20px] w-[76vw]  justify-center items-center mb-[50px]">
-          {petList}
-        </div>
+        <div className=" flex flex-col flex-wrap md:flex-row gap-[20px] w-[76vw]  justify-center items-center mb-[50px]"></div>
       </div>
+
       <Modal show={showModal} setShowModal={setShowModal} />
+      {petList}
     </>
   );
 };
